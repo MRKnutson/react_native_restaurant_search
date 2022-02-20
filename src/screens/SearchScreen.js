@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import RestaurantsList from "../components/RestaurantsList";
 import SearchBar from "../components/SearchBar";
 import useRestaurants from "../hooks/useRestaurants";
 
@@ -7,8 +8,15 @@ const SearchScreen = () => {
   const [term, setTerm] = useState("");
   const [searchAPI, results, errorMessage] = useRestaurants();
 
+  const filterResultsByPrice = (price) => {
+    let restaurants = results.filter((result) => {
+      return result.price == price;
+    });
+    return restaurants;
+  };
+
   return (
-    <View>
+    <>
       <SearchBar
         term={term}
         onTermChange={(newTerm) => setTerm(newTerm)}
@@ -17,8 +25,25 @@ const SearchScreen = () => {
       {errorMessage.length > 0 ? (
         <Text style={{ color: "red" }}>{errorMessage}</Text>
       ) : null}
-      <Text>We have found {results.length} results</Text>
-    </View>
+      <ScrollView>
+        <RestaurantsList
+          title='Cost Effective'
+          restaurants={filterResultsByPrice("$")}
+        />
+        <RestaurantsList
+          title='Bit Pricier'
+          restaurants={filterResultsByPrice("$$")}
+        />
+        <RestaurantsList
+          title='Big Spender'
+          restaurants={filterResultsByPrice("$$$")}
+        />
+        <RestaurantsList
+          title='More money than I have'
+          restaurants={filterResultsByPrice("$$$$")}
+        />
+      </ScrollView>
+    </>
   );
 };
 
