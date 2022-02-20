@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import SearchBar from "../components/SearchBar";
+import useRestaurants from "../hooks/useRestaurants";
 
 const SearchScreen = () => {
   const [term, setTerm] = useState("");
+  const [searchAPI, results, errorMessage] = useRestaurants();
+
   return (
     <View>
       <SearchBar
         term={term}
         onTermChange={(newTerm) => setTerm(newTerm)}
-        onTermSubmit={() => console.log("term Submitted")}
+        onTermSubmit={() => searchAPI(term)}
       />
-      <Text>Search Screen</Text>
-      <Text>{term}</Text>
+      {errorMessage.length > 0 ? (
+        <Text style={{ color: "red" }}>{errorMessage}</Text>
+      ) : null}
+      <Text>We have found {results.length} results</Text>
     </View>
   );
 };
